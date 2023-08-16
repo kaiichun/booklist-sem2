@@ -26,35 +26,34 @@ let authors = [
   { id: 2, name: "Author Two", bio: "Bio of Author Two" },
 ];
 
-app.get("/books", (require, response) => {
+app.get("/books", (request, response) => {
   response.json(books);
 });
 
-app.get("/books/:id", (require, response) => {
+app.get("/books/:id", (request, response) => {
   const book = books.find(
-    (b) => parseInt(b.id) === parseInt(require.params.id)
+    (b) => parseInt(b.id) === parseInt(request.params.id)
   );
   if (book) {
-    response.status(200).json(book);
+    const author = authors.find((author) => author.id === book.authorId);
+    response.status(200).json({ ...book, name: author.name, bio: author.bio });
   } else {
-    response.status(400).json({ error: "Books ID provided is not available" });
+    response.status(400).json("ID provided is not available");
   }
 });
-
-app.get("/reviews", (require, response) => {
+app.get("/reviews", (request, response) => {
   response.json(reviews);
 });
 
-app.get("/reviews/:id", (require, response) => {
+app.get("/reviews/:id", (request, response) => {
   const review = reviews.find(
-    (r) => parseInt(r.id) === parseInt(require.params.id)
+    (r) => parseInt(r.id) === parseInt(request.params.id)
   );
   if (review) {
-    response.status(200).json(review);
+    const book = books.find((b) => b.id === review.bookId);
+    response.status(200).json({ ...review, book_title: book.title });
   } else {
-    response
-      .status(400)
-      .json({ error: "Reviews ID provided is not available" });
+    response.status(400).json("ID provided is not available");
   }
 });
 
