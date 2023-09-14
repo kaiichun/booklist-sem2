@@ -1,18 +1,27 @@
 const express = require("express");
 const app = express();
 
-let books = [
+const books = [
   {
     id: 1,
     title: "Book One",
     description: "Description of book one",
     authorId: 1,
+    genre: "horror",
   },
   {
     id: 2,
     title: "Book Two",
     description: "Description of book two",
     authorId: 2,
+    genre: "romance",
+  },
+  {
+    id: 3,
+    title: "Book Three",
+    description: "Description of book three",
+    authorId: 1,
+    genre: "horror",
   },
 ];
 
@@ -26,8 +35,25 @@ let authors = [
   { id: 2, name: "Author Two", bio: "Bio of Author Two" },
 ];
 
+// /books?genre=horror
+// /books?genre=horror&author=2
 app.get("/books", (request, response) => {
-  response.json(books);
+  const genre = request.query.genre;
+  const author = req.query.author;
+  if (genre || author) {
+    const filteredBooks = books.filter((b) => {
+      if (genre && author) {
+        return b.genre === genre && b.authorId == author;
+      } else if (genre) {
+        return b.genre === genre;
+      } else if (author) {
+        return b.authorId == author;
+      }
+    });
+    response.json(filteredBooks);
+  } else {
+    response.json(books);
+  }
 });
 
 app.get("/books/:id", (request, response) => {
